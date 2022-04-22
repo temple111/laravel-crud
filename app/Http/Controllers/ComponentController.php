@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class ComponentController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +19,8 @@ class ComponentController extends Controller
      */
     public function index()
     {
-        //
+        $components = auth()->user()->component;
+        return view('components.index', compact('components'));
     }
 
     /**
@@ -24,7 +30,7 @@ class ComponentController extends Controller
      */
     public function create()
     {
-        //
+        return view('components.create');
     }
 
     /**
@@ -35,7 +41,15 @@ class ComponentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = auth()->user();
+        $component = $user->component()->create([
+            'name' => $request['name']
+        ]);
+        return redirect()->route('components.index')->with('alert', [
+            'type' => 'success',
+            'message' => "Resume {$request['name']} was created."
+        ]);
+
     }
 
     /**
@@ -46,7 +60,7 @@ class ComponentController extends Controller
      */
     public function show(Component $component)
     {
-        //
+
     }
 
     /**
@@ -57,7 +71,8 @@ class ComponentController extends Controller
      */
     public function edit(Component $component)
     {
-        //
+        $user = auth()->user();
+
     }
 
     /**
