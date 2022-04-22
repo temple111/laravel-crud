@@ -7,6 +7,11 @@
                 <div class="card">
                     <div class="card-header fw-bold">All your components</div>
                     <div class="card-body">
+                        @if (session('alert'))
+                            <div class="alert alert-{{ session('alert')['type'] }}" role="alert">
+                                {{ session('alert')['message'] }}
+                            </div>
+                        @endif
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -17,8 +22,7 @@
                                 @foreach ($components as $component)
                                     <tr>
                                         <td>
-                                            <a
-                                                href="{{ route('components.show', $component->id) }}">{{ $component->name }}
+                                            <a href="{{ route('components.show', $component->id) }}">{{ $component->name }}
                                             </a>
                                         </td>
                                         <td>

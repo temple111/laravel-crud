@@ -47,9 +47,8 @@ class ComponentController extends Controller
         ]);
         return redirect()->route('components.index')->with('alert', [
             'type' => 'success',
-            'message' => "Resume {$request['name']} was created."
+            'message' => "Component {$request['name']} was created."
         ]);
-
     }
 
     /**
@@ -60,7 +59,7 @@ class ComponentController extends Controller
      */
     public function show(Component $component)
     {
-
+        return view('components.show', compact('component'));
     }
 
     /**
@@ -71,8 +70,8 @@ class ComponentController extends Controller
      */
     public function edit(Component $component)
     {
-        $user = auth()->user();
-
+        $this->authorize('update', $component);
+        return view('components.edit', compact('component'));
     }
 
     /**
@@ -84,7 +83,22 @@ class ComponentController extends Controller
      */
     public function update(Request $request, Component $component)
     {
-        //
+        $this->authorize('update', $component);
+        if ($component->name == $request->name) {
+            return redirect()->route('components.index')->with('alert', [
+                'type' => 'warning',
+                'message' => "Component {$request['name']} was not updated because the name is the same."
+            ]);
+        } else {
+            $component->update([
+                'name' => $request->name
+            ]);
+
+            return redirect()->route('components.index')->with('alert', [
+                'type' => 'success',
+                'message' => "Component {$request['name']} was updated."
+            ]);
+        }
     }
 
     /**
@@ -95,6 +109,12 @@ class ComponentController extends Controller
      */
     public function destroy(Component $component)
     {
-        //
+        $this->authorize('delete', $component);
+        $component->delete();
+
+        return redirect()->route('components.index')->with('alert', [
+            'type' => 'primary',
+            'message' => "Component {$component['name']} was deleted successfully."
+        ]);
     }
 }
